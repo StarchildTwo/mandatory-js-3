@@ -3,9 +3,10 @@ const BASE_URL = "https://dog.ceo/api/breed";
 function getBreeds() {
     let url = "s/list/all"
     if (window.location.hash.length > 1) {
-        url = `/${window.location.hash.slice(1).replace("-", "/")}/images/random/3`
+        let hash = window.location.hash.slice(1).split("-");
+        console.log(hash[0], hash[1]);
+        getOneBreed(hash[0], hash[1]);
     }
-
     axios.get(BASE_URL + url)
         .then((response) => {
             let breeds = response.data.message;
@@ -17,14 +18,15 @@ function getBreeds() {
         })
 }
 
+// subBreed is optional.
 function getOneBreed(breed, subBreed) {
-    let url = `/${breed}/images/random/3`;
+    let url = `/${breed}/images/random/6`;
     if (window.location.hash.length > 1) {
-        url = `/${window.location.hash.slice(1)}/images/random/3`
+        url = `/${window.location.hash.slice(1)}/images/random/6`
     }
 
     if (subBreed !== undefined) {
-        url = `/${breed}/${subBreed}/images/random/3`;
+        url = `/${breed}/${subBreed}/images/random/6`;
     }
     axios.get(BASE_URL + url)
         .then((response) => {
@@ -50,8 +52,8 @@ function checkSubDoggo(breed) {
 
 function getRandomDoggos() {
     if (window.location.hash.length > 1) {
-        url = `/${window.location.hash.slice(1).replace("-", "/")}/images/random/3`
-    } else url = "s/image/random/3"
+        url = `/${window.location.hash.slice(1).replace("-", "/")}/images/random/6`
+    } else url = "s/image/random/6"
     axios.get(BASE_URL + url)
         .then((response) => {
             let picArr = response.data.message;
@@ -65,8 +67,8 @@ function getRandomDoggos() {
 
 function renderAllBreeds(obj) {
 
-    let div = document.querySelector(".start-lowSection");
-
+    let div = document.querySelector(".start-selector");
+    div.innerHTML = "";
     let select = document.createElement("select");
     select.className = "select";
     let option = document.createElement("option");
@@ -97,14 +99,14 @@ function renderSubBreed(arr, breed) {
     let div = document.querySelector(".subBreeds");
     div.innerHTML = "";
     let title = document.createElement("h3");
-    title.textContent = capitalWords(breed);
+    title.textContent = capitalWords(breed) + ":";
     div.appendChild(title);
 
     if (arr.length === 0) {
         let p = document.createElement("p");
         p.textContent = "This breed has no sub-breeds.";
-        p.className =
-            div.appendChild(p);
+        p.className = "noSub";
+        div.appendChild(p);
 
     } else if (arr.length > 0) {
 
@@ -144,6 +146,14 @@ function capitalWords(word) {
 
 }
 
-
+function refreshPage() {
+    if (window.location.hash.length > 1) {
+        let hash = window.location.hash.slice(1).split("-");
+        console.log(hash[0], hash[1]);
+        getOneBreed(hash[0], hash[1]);
+    } else {
+        getBreeds();
+    }
+}
 
 getBreeds();
