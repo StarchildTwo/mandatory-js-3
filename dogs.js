@@ -1,13 +1,18 @@
 const BASE_URL = "https://dog.ceo/api/breed";
 
 function getBreeds() {
+    window.addEventListener("hashchange", () => {
+        refreshPage();
+    });
     let url = "s/list/all"
     if (window.location.hash.length > 1) {
         let hash = window.location.hash.slice(1).split("-");
-        console.log(hash[0], hash[1]);
         getOneBreed(hash[0], hash[1]);
+        console.log(hash);
+
     }
     axios.get(BASE_URL + url)
+
         .then((response) => {
             let breeds = response.data.message;
             return breeds;
@@ -16,12 +21,16 @@ function getBreeds() {
             getRandomDoggos();
             renderAllBreeds(breeds);
         })
+        .catch((error) => {
+            error.log(error);
+        })
 }
 
 // subBreed is optional.
 function getOneBreed(breed, subBreed) {
     let url = `/${breed}/images/random/6`;
     if (window.location.hash.length > 1) {
+
         url = `/${window.location.hash.slice(1)}/images/random/6`
     }
 
@@ -37,6 +46,9 @@ function getOneBreed(breed, subBreed) {
         .then((arr) => {
             renderPictures(arr);
         })
+        .catch((error) => {
+            error.log(error);
+        })
 }
 
 function checkSubDoggo(breed) {
@@ -47,6 +59,9 @@ function checkSubDoggo(breed) {
         })
         .then((arr) => {
             renderSubBreed(arr, breed);
+        })
+        .catch((error) => {
+            error.log(error);
         })
 }
 
@@ -62,6 +77,10 @@ function getRandomDoggos() {
         .then((picArr) => {
             renderPictures(picArr);
         })
+        .catch((error) => {
+            error.log(error);
+        })
+
 }
 
 
@@ -87,9 +106,18 @@ function renderAllBreeds(obj) {
         if (window.location.hash > 1) {
             getOneBreed(window.location.hash);
         }
+
         getOneBreed(breed);
 
     })
+    for (let i = 0; i < select.length; i++) {
+        console.log(select.options[i].text.toLowerCase(), window.location.hash.slice(1));
+        let dog = select.options[i].text.toLowerCase();
+        if (dog === window.location.hash.slice(1).split("-")[0]) {
+            select.options[i].selected = true;
+
+        }
+    }
 }
 
 
@@ -147,6 +175,7 @@ function capitalWords(word) {
 }
 
 function refreshPage() {
+    console.log(window.location.hash.length)
     if (window.location.hash.length > 1) {
         let hash = window.location.hash.slice(1).split("-");
         console.log(hash[0], hash[1]);
