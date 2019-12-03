@@ -35,6 +35,11 @@ img {
     margin: 5px;
 }
 
+.random-img:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
 .start-pics {
     width: 70%;
     display: flex;

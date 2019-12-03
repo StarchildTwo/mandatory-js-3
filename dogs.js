@@ -9,7 +9,6 @@ function getBreeds() {
         let hash = window.location.hash.slice(1).split("-");
         getOneBreed(hash[0], hash[1]);
         console.log(hash);
-
     }
     axios.get(BASE_URL + url)
 
@@ -30,7 +29,6 @@ function getBreeds() {
 function getOneBreed(breed, subBreed) {
     let url = `/${breed}/images/random/6`;
     if (window.location.hash.length > 1) {
-
         url = `/${window.location.hash.slice(1)}/images/random/6`
     }
 
@@ -46,7 +44,7 @@ function getOneBreed(breed, subBreed) {
         .then((arr) => {
             renderPictures(arr);
         })
-        .catch((error) => {
+        .catch((error) => { // Does not work! FIX.
             error.log(error);
         })
 }
@@ -60,15 +58,15 @@ function checkSubDoggo(breed) {
         .then((arr) => {
             renderSubBreed(arr, breed);
         })
-        .catch((error) => {
+        .catch((error) => { // Needs fix!
             error.log(error);
         })
 }
 
 function getRandomDoggos() {
     if (window.location.hash.length > 1) {
-        url = `/${window.location.hash.slice(1).replace("-", "/")}/images/random/6`
-    } else url = "s/image/random/6"
+        url = `/${window.location.hash.slice(1).replace("-", "/")}/images/random/6`;
+    } else url = "s/image/random/6";
     axios.get(BASE_URL + url)
         .then((response) => {
             let picArr = response.data.message;
@@ -78,14 +76,12 @@ function getRandomDoggos() {
             renderPictures(picArr);
         })
         .catch((error) => {
-            error.log(error);
+            error.log(error); // Fixa.
         })
 
 }
 
-
 function renderAllBreeds(obj) {
-
     let div = document.querySelector(".start-selector");
     div.innerHTML = "";
     let select = document.createElement("select");
@@ -103,31 +99,27 @@ function renderAllBreeds(obj) {
     select.addEventListener("change", function (e) {
         let breed = e.target.value;
         window.location.hash = breed;
-        if (window.location.hash > 1) {
+        /* if (window.location.hash.length > 1) {
             getOneBreed(window.location.hash);
-        }
-
+        } */
         getOneBreed(breed);
-
     })
     for (let i = 0; i < select.length; i++) {
-        console.log(select.options[i].text.toLowerCase(), window.location.hash.slice(1));
+
         let dog = select.options[i].text.toLowerCase();
         if (dog === window.location.hash.slice(1).split("-")[0]) {
             select.options[i].selected = true;
-
         }
     }
+    let subSection = document.querySelector(".subBreeds");
+
 }
-
-
-
 
 function renderSubBreed(arr, breed) {
     let div = document.querySelector(".subBreeds");
     div.innerHTML = "";
     let title = document.createElement("h3");
-    title.textContent = capitalWords(breed) + ":";
+    title.textContent = titleFormatter(window.location.hash.slice(1));
     div.appendChild(title);
 
     if (arr.length === 0) {
@@ -137,7 +129,6 @@ function renderSubBreed(arr, breed) {
         div.appendChild(p);
 
     } else if (arr.length > 0) {
-
         let ul = document.createElement("ul");
         for (let dog of arr) {
             let li = document.createElement("li");
@@ -156,7 +147,6 @@ function renderSubBreed(arr, breed) {
 }
 
 function renderPictures(arr) {
-
     let picDiv = document.querySelector(".start-pics");
     picDiv.innerHTML = "";
     for (let i = 0; i < arr.length; i++) {
@@ -164,6 +154,17 @@ function renderPictures(arr) {
         img.setAttribute("src", arr[i]);
         img.className = "random-img";
         picDiv.appendChild(img);
+        img.addEventListener("click", () => {
+            if (window.location.hash === "") {
+                source = img.getAttribute("src");
+                window.location.hash = source.split("/")[4];
+                refreshPage();
+            }
+            if (window.location.hash.length > 1) {
+                refreshPage();
+            }
+
+        })
     }
 }
 
@@ -173,12 +174,21 @@ function capitalWords(word) {
     return word;
 
 }
+// Help-function for title.
+function titleFormatter(title) {
+    if (title.includes("-")) {
+        let newTitle = title.split("-");
+        newTitle[1] = `(${newTitle[1]})`;
+        return capitalWords(newTitle.join(" ") + ":");
+    } else {
+        return capitalWords(title) + ":";
+    }
+}
 
 function refreshPage() {
-    console.log(window.location.hash.length)
     if (window.location.hash.length > 1) {
         let hash = window.location.hash.slice(1).split("-");
-        console.log(hash[0], hash[1]);
+
         getOneBreed(hash[0], hash[1]);
     } else {
         getBreeds();
