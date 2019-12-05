@@ -21,7 +21,7 @@ function getBreeds() {
             renderAllBreeds(breeds);
         })
         .catch((error) => {
-            error.log(error);
+            console.error(error);
         })
 }
 
@@ -44,8 +44,8 @@ function getOneBreed(breed, subBreed) {
         .then((arr) => {
             renderPictures(arr);
         })
-        .catch((error) => { // Does not work! FIX.
-            error.log(error);
+        .catch((error) => {
+            console.error(error);
         })
 }
 
@@ -58,8 +58,8 @@ function checkSubDoggo(breed) {
         .then((arr) => {
             renderSubBreed(arr, breed);
         })
-        .catch((error) => { // Needs fix!
-            error.log(error);
+        .catch((error) => {
+            console.error(error);
         })
 }
 
@@ -76,7 +76,7 @@ function getRandomDoggos() {
             renderPictures(picArr);
         })
         .catch((error) => {
-            error.log(error); // Fixa.
+            console.error(error);
         })
 
 }
@@ -99,9 +99,7 @@ function renderAllBreeds(obj) {
     select.addEventListener("change", function (e) {
         let breed = e.target.value;
         window.location.hash = breed;
-        /* if (window.location.hash.length > 1) {
-            getOneBreed(window.location.hash);
-        } */
+
         getOneBreed(breed);
     })
     for (let i = 0; i < select.length; i++) {
@@ -111,7 +109,12 @@ function renderAllBreeds(obj) {
             select.options[i].selected = true;
         }
     }
+
     let subSection = document.querySelector(".subBreeds");
+    subSection.innerHTML = "";
+    let p = document.createElement("p");
+    p.textContent = "If you like a specific dog, click it to browse that breed. Otherwise choose from the list up on the header, `Get new dogs`-button will render other pictures."
+    subSection.appendChild(p);
 
 }
 
